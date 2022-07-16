@@ -2,8 +2,8 @@
 
 struct input_Data {
 	double time;
-	double model_vector1[3], model_vector2[3], model_vector3[3];
-	double real_vector1[3], real_vector2[3], real_vector3[3];
+	double model_Vectors[3][3];
+	double real_Vectors[3][3];
 };
 
 struct input_Package {
@@ -18,5 +18,7 @@ struct TRIAD_Output {
 };
 
 struct numerical_Parameters {
-	double matrix0[4][4], matrix1[4][4], matrix2[4][4], matrix3[4][4];
+	double matrices[4][4][4];
+	double multi_use_sum1, multi_use_sum2, alpha4;
+	double alpha4_derivatives[3];
 };

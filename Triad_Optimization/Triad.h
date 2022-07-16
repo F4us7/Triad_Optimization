@@ -13,7 +13,7 @@ void vector_Product(double* vector1, double* vector2, double* output) {
 	output[2] = (vector1[0] * vector2[1]) - (vector1[1] * vector2[0]);
 }
 
-void TRIAD(input_Package input, TRIAD_Output* output) {
+void TRIAD(input_Package input, TRIAD_Output &output) {
 	//Auxiliary matrix from model data (M), auxiliary matrix from real data (R).
 	double *matrix_Model[3], *matrix_Real[3]; 
 	// Calculation of the first vector pair of the 2 auxiliary Triads. 
@@ -57,13 +57,13 @@ void TRIAD(input_Package input, TRIAD_Output* output) {
 	double* output_Quaternion;
 	switch (input.counter) {
 	case 1:
-		output_Quaternion = (*output).quaternion1;
+		output_Quaternion = output.quaternion1;
 		break;
 	case 2:
-		output_Quaternion = (*output).quaternion2;
+		output_Quaternion = output.quaternion2;
 		break;
 	case 3:
-		output_Quaternion = (*output).quaternion3;
+		output_Quaternion = output.quaternion3;
 	}
 	output_Quaternion[0] = 0.5 * sqrt(1 + matrix_Transition[0][0] + matrix_Transition[1][1] + matrix_Transition[2][2]);
 	output_Quaternion[1] = (matrix_Transition[1][2] - matrix_Transition[2][1]) / (4 * output_Quaternion[0]);

@@ -26,7 +26,10 @@
     <ClInclude Include="Data_Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Optimization.h">
+    <ClInclude Include="Newton_Method.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Parameter_Calculation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

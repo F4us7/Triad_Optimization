@@ -155,7 +155,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Data_Types.h" />
-    <ClInclude Include="Optimization.h" />
+    <ClInclude Include="Newton_Method.h" />
+    <ClInclude Include="Parameter_Calculation.h" />
     <ClInclude Include="Triad.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
