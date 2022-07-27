@@ -159,6 +159,9 @@
     <ClInclude Include="Parameter_Calculation.h" />
     <ClInclude Include="Triad.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Data\Real_Data.dat" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

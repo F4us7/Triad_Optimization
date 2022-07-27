@@ -30,6 +30,7 @@ void calculate_Orthogonal_Quaternion(TRIAD_Output input, double* output) {
 // Theoretically this function could be micro-optimised to cut execution time, but ideally this requires an analysis of the compiled .exe file.
 void calculate_Numerical_Parameters(input_Data input, TRIAD_Output &quaternions, numerical_Parameters &output) {
 	input_Package vector_Pair;
+	double precisions[3] = { 0.0349065850399, 0.0349065850399, 0.0698131700798 };
 	// Calculation of the 3 approximative quaternions from the intial 3D vector projections.
 	// To do (before working on data): Add a control sequence to verify that the initial 3D vector projections are non-collinear and are not zero-vectors, before calling the TRIAD algorithm.
 	vector_Pair = { 1, input.model_Vectors[0], input.model_Vectors[1], input.real_Vectors[0], input.real_Vectors[1] };
@@ -72,7 +73,7 @@ void calculate_Numerical_Parameters(input_Data input, TRIAD_Output &quaternions,
 				vector_Product((quaternion_Array[j] + 1), vector_component, vector_summand);
 				output.matrices[n + 1][i][j] = 0;
 				for (int k = 0; k < 3; k++) {
-					output.matrices[n + 1][i][j] += input.accuracies[n] * input.real_Vectors[n][k] * (vector_summand[k] - scalar_component * quaternion_Array[j][k + 1] + quaternion_Array[j][0] * vector_component[k]);
+					output.matrices[n + 1][i][j] += precisions[n] * input.real_Vectors[n][k] * (vector_summand[k] - scalar_component * quaternion_Array[j][k + 1] + quaternion_Array[j][0] * vector_component[k]);
 				}
 			}
 		}

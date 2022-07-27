@@ -5,7 +5,6 @@ struct input_Data {
 	double time;
 	double model_Vectors[3][3];
 	double real_Vectors[3][3];
-	double accuracies[3];
 };
 
 // Structure used to pass data into the TRIAD algorithm.
