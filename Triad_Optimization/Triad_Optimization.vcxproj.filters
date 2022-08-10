@@ -26,16 +26,24 @@
     <ClInclude Include="Data_Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Newton_Method.h">
+    <ClInclude Include="Parameter_Calculation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Parameter_Calculation.h">
+    <ClInclude Include="Newton_Method_ALT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Newton_Method.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Data\Real_Data.dat">
+    <None Include="..\Data\Vector_Data.dat">
       <Filter>Resource Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Data\Vector_Data.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

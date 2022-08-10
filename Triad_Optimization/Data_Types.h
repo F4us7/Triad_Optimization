@@ -16,12 +16,19 @@ struct input_Package {
 
 // Structure used to store the output form the TRIAD algorithm: the 3 approximative quaternions.
 struct TRIAD_Output {
-	double quaternion1[4], quaternion2[4], quaternion3[4];
+	double quaternion_array[4][4];
 };
 
 // Structure used to store all the numerical data required for the efficient execution of Newton's method.
 struct numerical_Parameters {
 	double matrices[4][4][4];
-	double multi_use_sum1, multi_use_sum2, alpha4;
+	double multi_use_sum, alpha4;
 	double alpha4_derivatives[3];
+};
+
+// Structure to contain the logged output from the TRIAD_optimisation algorithm.
+struct optimisation_Output {
+	double mu, coordinates[4];
+	double loss_Value, delta, optimal_quaternion[4];
+	int initial_values_case, iteration_count;
 };

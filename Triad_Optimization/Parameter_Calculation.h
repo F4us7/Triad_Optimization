@@ -4,23 +4,23 @@
 
 // Function to calculate the quaternion orthogonal to approximation hyperplane in the R^4 space.
 // This function may be rewritten more compactly using a determinant function, yet this may result in the loss of speed. Deserves to be looked into.
-void calculate_Orthogonal_Quaternion(TRIAD_Output input, double* output) {
-	output[0] = input.quaternion1[1] * (input.quaternion2[2] * input.quaternion3[3] - input.quaternion2[3] * input.quaternion3[2])
-		- input.quaternion2[1] * (input.quaternion1[2] * input.quaternion3[3] - input.quaternion1[3] * input.quaternion3[2])
-		+ input.quaternion3[1] * (input.quaternion1[2] * input.quaternion2[3] - input.quaternion1[3] * input.quaternion2[2]);
-	output[1] = - input.quaternion1[0] * (input.quaternion2[2] * input.quaternion3[3] - input.quaternion2[3] * input.quaternion3[2])
-		+ input.quaternion2[0] * (input.quaternion1[2] * input.quaternion3[3] - input.quaternion1[3] * input.quaternion3[2])
-		- input.quaternion3[0] * (input.quaternion1[2] * input.quaternion2[3] - input.quaternion1[3] * input.quaternion2[2]);
-	output[2] = input.quaternion1[0] * (input.quaternion2[1] * input.quaternion3[3] - input.quaternion2[3] * input.quaternion3[1])
-		- input.quaternion2[0] * (input.quaternion1[1] * input.quaternion3[3] - input.quaternion1[3] * input.quaternion3[1])
-		+ input.quaternion3[0] * (input.quaternion1[1] * input.quaternion2[3] - input.quaternion1[3] * input.quaternion2[1]);
-	output[3] = - input.quaternion1[0] * (input.quaternion2[1] * input.quaternion3[2] - input.quaternion2[2] * input.quaternion3[1])
-		+ input.quaternion2[0] * (input.quaternion1[1] * input.quaternion3[2] - input.quaternion1[2] * input.quaternion3[1])
-		- input.quaternion3[0] * (input.quaternion1[1] * input.quaternion2[2] - input.quaternion1[2] * input.quaternion2[1]);
+void calculate_Orthogonal_Quaternion(TRIAD_Output& input) {
+	input.quaternion_array[3][0] = input.quaternion_array[0][1] * (input.quaternion_array[1][2] * input.quaternion_array[2][3] - input.quaternion_array[1][3] * input.quaternion_array[2][2])
+		- input.quaternion_array[1][1] * (input.quaternion_array[0][2] * input.quaternion_array[2][3] - input.quaternion_array[0][3] * input.quaternion_array[2][2])
+		+ input.quaternion_array[2][1] * (input.quaternion_array[0][2] * input.quaternion_array[1][3] - input.quaternion_array[0][3] * input.quaternion_array[1][2]);
+	input.quaternion_array[3][1] = - input.quaternion_array[0][0] * (input.quaternion_array[1][2] * input.quaternion_array[2][3] - input.quaternion_array[1][3] * input.quaternion_array[2][2])
+		+ input.quaternion_array[1][0] * (input.quaternion_array[0][2] * input.quaternion_array[2][3] - input.quaternion_array[0][3] * input.quaternion_array[2][2])
+		- input.quaternion_array[2][0] * (input.quaternion_array[0][2] * input.quaternion_array[1][3] - input.quaternion_array[0][3] * input.quaternion_array[1][2]);
+	input.quaternion_array[3][2] = input.quaternion_array[0][0] * (input.quaternion_array[1][1] * input.quaternion_array[2][3] - input.quaternion_array[1][3] * input.quaternion_array[2][1])
+		- input.quaternion_array[1][0] * (input.quaternion_array[0][1] * input.quaternion_array[2][3] - input.quaternion_array[0][3] * input.quaternion_array[2][1])
+		+ input.quaternion_array[2][0] * (input.quaternion_array[0][1] * input.quaternion_array[1][3] - input.quaternion_array[0][3] * input.quaternion_array[1][1]);
+	input.quaternion_array[3][3] = - input.quaternion_array[0][0] * (input.quaternion_array[1][1] * input.quaternion_array[2][2] - input.quaternion_array[1][2] * input.quaternion_array[2][1])
+		+ input.quaternion_array[1][0] * (input.quaternion_array[0][1] * input.quaternion_array[2][2] - input.quaternion_array[0][2] * input.quaternion_array[2][1])
+		- input.quaternion_array[2][0] * (input.quaternion_array[0][1] * input.quaternion_array[1][2] - input.quaternion_array[0][2] * input.quaternion_array[1][1]);
 	// Scaling the calculated orthogonal quaternion such that it has a norm = 1.
-	double norm = sqrt(pow(output[0], 2) + pow(output[1], 2) + pow(output[2], 2) + pow(output[3], 2));
+	double norm = sqrt(pow(input.quaternion_array[3][0], 2) + pow(input.quaternion_array[3][1], 2) + pow(input.quaternion_array[3][2], 2) + pow(input.quaternion_array[3][3], 2));
 	for (int i = 0; i < 4; i++) {
-		output[i] /= norm;
+		input.quaternion_array[3][i] /= norm;
 	}
 };
 
@@ -30,32 +30,42 @@ void calculate_Orthogonal_Quaternion(TRIAD_Output input, double* output) {
 // Theoretically this function could be micro-optimised to cut execution time, but ideally this requires an analysis of the compiled .exe file.
 void calculate_Numerical_Parameters(input_Data input, TRIAD_Output &quaternions, numerical_Parameters &output) {
 	input_Package vector_Pair;
-	double precisions[3] = { 0.0349065850399, 0.0349065850399, 0.0698131700798 };
+	double accuracy_coefficients[3] = { 0.4, 0.4, 0.2 };
 	// Calculation of the 3 approximative quaternions from the intial 3D vector projections.
 	// To do (before working on data): Add a control sequence to verify that the initial 3D vector projections are non-collinear and are not zero-vectors, before calling the TRIAD algorithm.
-	vector_Pair = { 1, input.model_Vectors[0], input.model_Vectors[1], input.real_Vectors[0], input.real_Vectors[1] };
+	vector_Pair = { 0, input.model_Vectors[0], input.model_Vectors[1], input.real_Vectors[0], input.real_Vectors[1] };
 	TRIAD(vector_Pair, quaternions);
-	vector_Pair = { 2, input.model_Vectors[1], input.model_Vectors[2], input.real_Vectors[1], input.real_Vectors[2] };
+	vector_Pair = { 1, input.model_Vectors[1], input.model_Vectors[2], input.real_Vectors[1], input.real_Vectors[2] };
 	TRIAD(vector_Pair, quaternions);
-	vector_Pair = { 3, input.model_Vectors[2], input.model_Vectors[0], input.real_Vectors[2], input.real_Vectors[0] };
+	vector_Pair = { 2, input.model_Vectors[2], input.model_Vectors[0], input.real_Vectors[2], input.real_Vectors[0] };
 	TRIAD(vector_Pair, quaternions);
+	for (int i = 0; i < 2; i++) {
+		double scalar_quaternion_product = 0;
+		for (int k = 0; k < 4; k++) {
+			scalar_quaternion_product += quaternions.quaternion_array[i][k] * quaternions.quaternion_array[i + 1][k];
+		}
+		if (scalar_quaternion_product < 0) {
+			for (int k = 0; k < 4; k++) {
+				quaternions.quaternion_array[i + 1][k] *= -1;
+			}
+		}
+	}
 	// Calculation of the quaternion orthogonal to the hyperplane spaned by the 3 approximative quaternions.
-	double quaternion4[4];
-	double* quaternion_Array[4] = { quaternions.quaternion1, quaternions.quaternion2, quaternions.quaternion3, quaternion4 };
-	calculate_Orthogonal_Quaternion(quaternions, quaternion4);
+	calculate_Orthogonal_Quaternion(quaternions);
 	// Calculation of output.matrices[0]. It is a symmetrical matrix, which is used to cut execution time.
 	double running_sum;
-	for (int i = 0; i < 4; i++) {
-		for (int j = i + 1; j < 4; j++) {
+	for (int i = 0; i < 3; i++) {
+		for (int j = i + 1; j < 3; j++) {
 			running_sum = 0;
-			for (int k = 0; k < 4; k++) { running_sum += quaternion_Array[i][k] * quaternion_Array[j][k]; };
+			for (int k = 0; k < 4; k++) { running_sum += quaternions.quaternion_array[i][k] * quaternions.quaternion_array[j][k]; };
 			output.matrices[0][i][j] = running_sum;
 			output.matrices[0][j][i] = running_sum;
 		}
-		running_sum = 0;
-		for (int k = 0; k < 4; k++) { running_sum += quaternion_Array[i][k] * quaternion_Array[i][k]; };
-		output.matrices[0][i][i] = running_sum;
+		output.matrices[0][i][i] = 1;
+		output.matrices[0][3][i] = 0;
+		output.matrices[0][i][3] = 0;
 	}
+	output.matrices[0][3][3] = 1;
 	// Calculation of matrices output.matrices[n] (n = 1,2,3). It should be noted that these matrices theoretically mustn't be symmetrical.
 	double scalar_component;
 	double vector_component[3];
@@ -65,15 +75,16 @@ void calculate_Numerical_Parameters(input_Data input, TRIAD_Output &quaternions,
 	for (int n = 0; n < 3; n++) {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
-				scalar_component = -scalar_Product((quaternion_Array[i] + 1), input.model_Vectors[n]);
-				vector_Product((quaternion_Array[i] + 1), input.model_Vectors[n], vector_component);
+				scalar_component = -scalar_Product((quaternions.quaternion_array[i] + 1), input.model_Vectors[n]);
+				vector_Product((quaternions.quaternion_array[i] + 1), input.model_Vectors[n], vector_component);
 				for (int k = 0; k < 3; k++) {
-					vector_component[k] += quaternion_Array[i][0] * input.model_Vectors[n][k];
+					vector_component[k] += quaternions.quaternion_array[i][0] * input.model_Vectors[n][k];
 				}
-				vector_Product((quaternion_Array[j] + 1), vector_component, vector_summand);
+				vector_Product((quaternions.quaternion_array[j] + 1), vector_component, vector_summand);
 				output.matrices[n + 1][i][j] = 0;
 				for (int k = 0; k < 3; k++) {
-					output.matrices[n + 1][i][j] += precisions[n] * input.real_Vectors[n][k] * (vector_summand[k] - scalar_component * quaternion_Array[j][k + 1] + quaternion_Array[j][0] * vector_component[k]);
+					output.matrices[n + 1][i][j] += accuracy_coefficients[n] * input.real_Vectors[n][k] * (vector_summand[k] 
+						- scalar_component * quaternions.quaternion_array[j][k + 1] + quaternions.quaternion_array[j][0] * vector_component[k]);
 				}
 			}
 		}

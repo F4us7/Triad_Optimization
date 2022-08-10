@@ -58,21 +58,10 @@ void TRIAD(input_Package input, TRIAD_Output &output) {
 		}
 	}
 	// The input_Package struct stores a counter, which is used to select the storage location in the TRIAD_output struct for the calculated approximative quaternion.
-	double* output_Quaternion = NULL;
-	switch (input.counter) {
-	case 1:
-		output_Quaternion = output.quaternion1;
-		break;
-	case 2:
-		output_Quaternion = output.quaternion2;
-		break;
-	case 3:
-		output_Quaternion = output.quaternion3;
-	}
 	// Should look at other methods to calcualte the approximative quaternion from the transition matrix, or derive it myself. 
 	// In some cases output_Quaternion[0] might degrade to be equal to 0.
-	output_Quaternion[0] = 0.5 * sqrt(1 + matrix_Transition[0][0] + matrix_Transition[1][1] + matrix_Transition[2][2]);
-	output_Quaternion[1] = (matrix_Transition[1][2] - matrix_Transition[2][1]) / (4 * output_Quaternion[0]);
-	output_Quaternion[2] = (matrix_Transition[2][0] - matrix_Transition[0][2]) / (4 * output_Quaternion[0]);
-	output_Quaternion[3] = (matrix_Transition[0][1] - matrix_Transition[1][0]) / (4 * output_Quaternion[0]);
+	output.quaternion_array[input.counter][0] = 0.5 * sqrt(1 + matrix_Transition[0][0] + matrix_Transition[1][1] + matrix_Transition[2][2]);
+	output.quaternion_array[input.counter][1] = (matrix_Transition[1][2] - matrix_Transition[2][1]) / (4 * output.quaternion_array[input.counter][0]);
+	output.quaternion_array[input.counter][2] = (matrix_Transition[2][0] - matrix_Transition[0][2]) / (4 * output.quaternion_array[input.counter][0]);
+	output.quaternion_array[input.counter][3] = (matrix_Transition[0][1] - matrix_Transition[1][0]) / (4 * output.quaternion_array[input.counter][0]);
 };
